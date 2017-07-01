@@ -14,6 +14,8 @@
 
 namespace Async
 {
+	class Reactor;
+	
 	namespace Network
 	{
 		class Socket : public Handle
@@ -48,6 +50,9 @@ namespace Async
 			Address remote_address();
 			
 			void bind(Address & address);
+			void listen(std::size_t backlog = SOMAXCONN);
+			
+			Socket accept(Reactor & reactor);
 		};
 	}
 }

@@ -36,7 +36,11 @@ namespace Async
 							fibers.emplace_back([&](){
 								auto socket = endpoint.bind();
 								
+								socket.listen();
+								
 								std::cerr << "Socket " << (Descriptor)socket << " bound to " << endpoint.address() << std::endl;
+								
+								auto client = socket.accept(reactor);
 							});
 						}
 						

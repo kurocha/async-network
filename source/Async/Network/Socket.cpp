@@ -10,6 +10,8 @@
 
 #include <system_error>
 
+#include <Async/Readable.hpp>
+
 namespace Async
 {
 	namespace Network
@@ -65,6 +67,36 @@ namespace Async
 			
 			if (result == -1)
 				throw std::system_error(errno, std::generic_category(), "bind");
+		}
+		
+		void Socket::listen(std::size_t backlog)
+		{
+			auto result = ::listen(_descriptor, backlog);
+			
+			if (result == -1)
+				throw std::system_error(errno, std::generic_category(), "listen");
+		}
+		
+		Socket Socket::accept(Reactor & reactor)
+		{
+			Readable event(_descriptor, reactor);
+			
+			sockaddr_storage storage;
+			sockaddr * data = reinterpret_cast<sockaddr *>(&storage);
+			socklen_t size = sizeof(storage);
+			
+			while (true) {
+				auto result = ::accept(_descriptor, data, &size);
+				
+				if (result == -1) {
+					if (errno != EAGAIN && errno != EWOULDBLOCK)
+						throw std::system_error(errno, std::generic_category(), "accept");
+				} else {
+					return Socket(result);
+				}
+				
+				event.wait();
+			}
 		}
 	}
 }
