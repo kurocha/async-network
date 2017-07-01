@@ -37,6 +37,15 @@ namespace Async
 			static Endpoints service_endpoints(const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			static Endpoints named_endpoints(const std::string & host, const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			
+			Socket bind()
+			{
+				Socket socket(_socket_domain, _socket_type, _socket_protocol);
+				
+				socket.bind(_address);
+				
+				return socket;
+			}
+			
 		private:
 			Endpoint(const addrinfo *);
 			static Endpoints for_name(const char * host, const char * service, addrinfo * hints);
