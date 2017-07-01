@@ -37,9 +37,9 @@ namespace Async
 			sockaddr * data = reinterpret_cast<sockaddr *>(&storage);
 			socklen_t size = sizeof(storage);
 
-			auto error = ::getsockname(_descriptor, data, &size);
+			auto result = ::getsockname(_descriptor, data, &size);
 
-			if (error == -1 || errno == ENOTCONN)
+			if (result == -1 || errno == ENOTCONN)
 				throw std::system_error(errno, std::generic_category(), "getsockname");
 			
 			return Address(data, size);
@@ -51,9 +51,9 @@ namespace Async
 			sockaddr * data = reinterpret_cast<sockaddr *>(&storage);
 			socklen_t size = sizeof(storage);
 
-			auto error = ::getpeername(_descriptor, data, &size);
+			auto result = ::getpeername(_descriptor, data, &size);
 
-			if (error == -1 || errno == ENOTCONN)
+			if (result == -1 || errno == ENOTCONN)
 				throw std::system_error(errno, std::generic_category(), "getpeername");
 			
 			return Address(data, size);
@@ -61,7 +61,10 @@ namespace Async
 		
 		void Socket::bind(Address & address)
 		{
-			int bind(int socket, const struct sockaddr *address, socklen_t address_len);
+			auto result = ::bind(_descriptor, address.data(), address.size());
+			
+			if (result == -1)
+				throw std::system_error(errno, std::generic_category(), "bind");
 		}
 	}
 }
