@@ -49,10 +49,17 @@ namespace Async
 			Address local_address();
 			Address remote_address();
 			
+			void set_reuse_address(bool value = true);
+			
 			void bind(Address & address);
 			void listen(std::size_t backlog = SOMAXCONN);
 			
+			void connect(Address & address, Reactor & reactor);
+			
 			Socket accept(Reactor & reactor);
+			
+		protected:
+			void check_errors();
 		};
 	}
 }

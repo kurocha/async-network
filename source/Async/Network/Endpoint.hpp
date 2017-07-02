@@ -29,6 +29,9 @@ namespace Async
 			Endpoint(const Address & address, Socket::Domain socket_domain, Socket::Type socket_type, Socket::Protocol socket_protocol);
 			virtual ~Endpoint();
 			
+			Endpoint(const Endpoint & other) = default;
+			Endpoint & operator=(const Endpoint & other) = default;
+			
 			const Address & address() const {return _address;}
 			const Socket::Domain & socket_domain() const {return _socket_domain;}
 			const Socket::Type & socket_type() const {return _socket_type;}
@@ -37,11 +40,21 @@ namespace Async
 			static Endpoints service_endpoints(const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			static Endpoints named_endpoints(const std::string & host, const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			
-			Socket bind()
+			Socket bind(bool reuse_address = true)
 			{
 				Socket socket(_socket_domain, _socket_type, _socket_protocol);
 				
+				socket.set_reuse_address();
 				socket.bind(_address);
+				
+				return socket;
+			}
+			
+			Socket connect(Reactor & reactor)
+			{
+				Socket socket(_socket_domain, _socket_type, _socket_protocol);
+				
+				socket.connect(_address, reactor);
 				
 				return socket;
 			}
