@@ -12,6 +12,7 @@
 #include <Async/Network/Endpoint.hpp>
 #include <Async/Network/Socket.hpp>
 #include <Async/Reactor.hpp>
+#include <Async/Protocol.hpp>
 
 #include <list>
 
@@ -47,11 +48,10 @@ namespace Async
 								
 								std::cerr << "Socket " << (Descriptor)socket << " client connected to " << endpoint.address() << std::endl;
 								
-								Byte buffer[128];
-								auto end = client.read(buffer, buffer+127, reactor);
-								*(end+1) = '\0';
+								StreamProtocol protocol(client, reactor);
 								
-								examiner.expect(std::string((char*)buffer)) == "Hello World!";
+								auto message = protocol.read(12);
+								examiner.expect(message) == "Hello World!";
 							});
 						}
 						
@@ -70,8 +70,8 @@ namespace Async
 							
 							std::cerr << "Socket " << (Descriptor)socket << " connected to " << endpoint.address() << std::endl;
 							
-							std::string message = "Hello World!";
-							socket.write((const Byte *)message.data(), (const Byte *)message.data() + message.size(), reactor);
+							StreamProtocol protocol(socket, reactor);
+							protocol.write("Hello World!");
 						}
 					});
 					

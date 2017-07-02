@@ -15,8 +15,6 @@
 #include <Async/Readable.hpp>
 #include <Async/Writable.hpp>
 
-#include <iostream>
-
 namespace Async
 {
 	namespace Network
@@ -97,26 +95,25 @@ namespace Async
 		
 		Socket Socket::accept(Reactor & reactor)
 		{
-			//Readable event(_descriptor, reactor);
-			After event(0.01, reactor);
+			Readable event(_descriptor, reactor);
 			
 			sockaddr_storage storage;
 			sockaddr * data = reinterpret_cast<sockaddr *>(&storage);
 			socklen_t size = sizeof(storage);
 			
 			while (true) {
-				std::cerr << "::accept(" << _descriptor << ", ...)" << std::endl;
+				// std::cerr << "::accept(" << _descriptor << ", ...)" << std::endl;
 				auto result = ::accept(_descriptor, data, &size);
 				
 				if (result == -1) {
-					std::cerr << "::accept(" << _descriptor << ", ...) -> " << result << " errno=" << errno << std::endl;
+					// std::cerr << "::accept(" << _descriptor << ", ...) -> " << result << " errno=" << errno << std::endl;
 					if (errno != EAGAIN && errno != EWOULDBLOCK)
 						throw std::system_error(errno, std::generic_category(), "accept");
 				} else {
 					return Socket(result);
 				}
 				
-				std::cerr << "::accept(" << _descriptor << ", ...) waiting..." << std::endl;
+				// std::cerr << "::accept(" << _descriptor << ", ...) waiting..." << std::endl;
 				event.wait();
 			}
 		}

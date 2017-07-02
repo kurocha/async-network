@@ -31,7 +31,7 @@ namespace Async
 			typedef int Protocol;
 			
 			Socket(Domain domain, Type type, Protocol protocol = 0);
-			Socket(Descriptor descriptor) : Handle(descriptor) {}
+			Socket(Descriptor descriptor) noexcept : Handle(descriptor) {}
 			
 			virtual ~Socket();
 
