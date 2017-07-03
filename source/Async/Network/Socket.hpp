@@ -32,9 +32,13 @@ namespace Async
 			
 			Socket(Domain domain, Type type, Protocol protocol = 0);
 			Socket(Descriptor descriptor) noexcept : Handle(descriptor) {}
-			
-			virtual ~Socket();
 
+			Socket(const Socket &) = default;
+			Socket & operator=(const Socket &) = default;
+
+			Socket(Socket &&) = default;
+			Socket & operator=(Socket &&) = default;
+			
 			/// Check if the underlying socket is connected to a remote peer using getpeername.
 			bool is_connected() const;
 

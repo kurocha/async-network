@@ -31,11 +31,13 @@ namespace Async
 					
 					auto endpoints = Endpoint::service_endpoints(4040, SOCK_STREAM);
 					
-					Fiber server([&](){
-						std::list<Fiber> fibers;
+					Fiber server([&]{
+						Fiber::Pool bindings;
 						
 						for (auto & endpoint : endpoints) {
-							fibers.emplace_back([&](){
+							bindings.resume([&]{
+								Fiber::Pool connections;
+								
 								std::cerr << "binding to " << endpoint.address() << std::endl;
 								
 								auto socket = endpoint.bind();
@@ -44,19 +46,18 @@ namespace Async
 								
 								std::cerr << "Socket " << (Descriptor)socket << " listening to " << endpoint.address() << std::endl;
 								
-								auto client = socket.accept(reactor);
-								
-								std::cerr << "Socket " << (Descriptor)socket << " client connected to " << endpoint.address() << std::endl;
-								
-								StreamProtocol protocol(client, reactor);
-								
-								auto message = protocol.read(12);
-								examiner.expect(message) == "Hello World!";
+								while (true) {
+									connections.resume([&, client = socket.accept(reactor)]{
+										std::cerr << "Socket " << (Descriptor)socket << " client connected to " << endpoint.address() << std::endl;
+										
+										StreamProtocol protocol(client, reactor);
+										
+										auto message = protocol.read(12);
+										
+										examiner.expect(message) == "Hello World!";
+									});
+								}
 							});
-						}
-						
-						for (auto & fiber : fibers) {
-							fiber.resume();
 						}
 						
 						Fiber::current->yield();
@@ -64,13 +65,14 @@ namespace Async
 					
 					server.resume();
 					
-					Fiber client([&](){
+					Fiber client([&]{
 						for (auto & endpoint : endpoints) {
 							auto socket = endpoint.connect(reactor);
 							
 							std::cerr << "Socket " << (Descriptor)socket << " connected to " << endpoint.address() << std::endl;
 							
 							StreamProtocol protocol(socket, reactor);
+							
 							protocol.write("Hello World!");
 						}
 					});

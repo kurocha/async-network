@@ -24,10 +24,6 @@ namespace Async
 			set_non_blocking(*this);
 		}
 		
-		Socket::~Socket()
-		{
-		}
-		
 		void Socket::shutdown(int mode)
 		{
 			auto result = ::shutdown(_descriptor, mode);
@@ -110,7 +106,7 @@ namespace Async
 					if (errno != EAGAIN && errno != EWOULDBLOCK)
 						throw std::system_error(errno, std::generic_category(), "accept");
 				} else {
-					return Socket(result);
+					return result;
 				}
 				
 				// std::cerr << "::accept(" << _descriptor << ", ...) waiting..." << std::endl;

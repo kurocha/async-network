@@ -41,7 +41,7 @@ define_target "async-nework-tests" do |target|
 		run tests: "AsyncNetwork", source_files: test_root.glob('Async/Network/**/*.cpp')
 	end
 	
-	target.depends "Language/C++11", private: true
+	target.depends "Language/C++14", private: true
 	
 	target.depends "Library/UnitTest"
 	target.depends "Library/AsyncNetwork"
