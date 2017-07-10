@@ -19,9 +19,13 @@ namespace Async
 {
 	namespace Network
 	{
-		Socket::Socket(Domain domain, Type type, Protocol protocol) : Handle(::socket(domain, type, protocol))
+		Socket::Socket(Descriptor descriptor) : Handle(descriptor)
 		{
 			set_non_blocking(*this);
+		}
+		
+		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type, protocol))
+		{
 		}
 		
 		void Socket::shutdown(int mode)
@@ -117,6 +121,8 @@ namespace Async
 		void Socket::connect(Address & address, Reactor & reactor)
 		{
 			auto result = ::connect(_descriptor, address.data(), address.size());
+			
+			// std::cerr << "::connect(...) -> " << result << std::endl;
 			
 			if (result == -1) {
 				if (errno == EINPROGRESS) {

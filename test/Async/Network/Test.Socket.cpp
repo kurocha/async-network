@@ -29,7 +29,7 @@ namespace Async
 				[](UnitTest::Examiner & examiner) {
 					Reactor reactor;
 					
-					auto endpoints = Endpoint::service_endpoints(4040, SOCK_STREAM);
+					auto endpoints = Endpoint::service_endpoints(51200, SOCK_STREAM);
 					
 					Fiber server([&]{
 						Fiber::Pool bindings;
@@ -79,7 +79,7 @@ namespace Async
 					
 					client.resume();
 					
-					reactor.wait(2);
+					reactor.wait(0.1);
 				}
 			},
 		};
