@@ -89,4 +89,4 @@ install:
 # Run tests:
 script:
   - teapot fetch
-  - teapot build Test/Async::Network $TARGETS
+  - teapot build Test/AsyncNetwork $TARGETS
