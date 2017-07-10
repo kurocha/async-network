@@ -22,7 +22,7 @@ namespace Async
 					auto endpoints = Endpoint::service_endpoints(1024, SOCK_STREAM);
 					
 					examiner << "Interface endpoints available.";
-					examiner.expect(endpoints.size()) > 0;
+					examiner.expect(endpoints.size()) > 0u;
 					
 					int inet = 0;
 					for(auto & endpoint : endpoints)
@@ -44,7 +44,7 @@ namespace Async
 				[](UnitTest::Examiner & examiner) {
 					auto endpoints = Endpoint::named_endpoints("localhost", "http", SOCK_STREAM);
 					
-					examiner.expect(endpoints.size()) > 0;
+					examiner.expect(endpoints.size()) > 0u;
 				}
 			},
 
