@@ -40,7 +40,7 @@ namespace Async
 			static Endpoints service_endpoints(const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			static Endpoints named_endpoints(const std::string & host, const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			
-			Socket bind(bool reuse_address = true)
+			Socket bind(bool reuse_address = true) const
 			{
 				Socket socket(_socket_domain, _socket_type, _socket_protocol);
 				
@@ -50,7 +50,7 @@ namespace Async
 				return socket;
 			}
 			
-			Socket connect(Reactor & reactor)
+			Socket connect(Reactor & reactor) const
 			{
 				Socket socket(_socket_domain, _socket_type, _socket_protocol);
 				

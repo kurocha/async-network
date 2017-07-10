@@ -55,12 +55,12 @@ namespace Async
 			
 			void set_reuse_address(bool value = true);
 			
-			void bind(Address & address);
+			void bind(const Address & address);
 			void listen(std::size_t backlog = SOMAXCONN);
 			
-			void connect(Address & address, Reactor & reactor);
+			void connect(const Address & address, Reactor & reactor);
 			
-			Socket accept(Reactor & reactor);
+			Socket accept(Reactor & reactor) const;
 			
 		protected:
 			void check_errors();

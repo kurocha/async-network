@@ -77,7 +77,7 @@ namespace Async
 #endif
 		}
 		
-		void Socket::bind(Address & address)
+		void Socket::bind(const Address & address)
 		{
 			auto result = ::bind(_descriptor, address.data(), address.size());
 			
@@ -93,7 +93,7 @@ namespace Async
 				throw std::system_error(errno, std::generic_category(), "listen");
 		}
 		
-		Socket Socket::accept(Reactor & reactor)
+		Socket Socket::accept(Reactor & reactor) const
 		{
 			Readable event(_descriptor, reactor);
 			
@@ -118,7 +118,7 @@ namespace Async
 			}
 		}
 		
-		void Socket::connect(Address & address, Reactor & reactor)
+		void Socket::connect(const Address & address, Reactor & reactor)
 		{
 			auto result = ::connect(_descriptor, address.data(), address.size());
 			
