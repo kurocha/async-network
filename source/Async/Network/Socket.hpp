@@ -30,6 +30,8 @@ namespace Async
 			/// IPPROTO_TCP, IPPROTO_UDP, IPPROTO_IPX, etc
 			typedef int Protocol;
 			
+			Socket() {}
+			
 			Socket(Domain domain, Type type, Protocol protocol = 0);
 			Socket(Descriptor descriptor);
 
