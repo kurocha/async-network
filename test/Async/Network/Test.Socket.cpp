@@ -12,7 +12,7 @@
 #include <Async/Network/Endpoint.hpp>
 #include <Async/Network/Socket.hpp>
 #include <Async/Reactor.hpp>
-#include <Async/Protocol.hpp>
+#include <Async/Protocol/Stream.hpp>
 
 #include <list>
 
@@ -50,7 +50,7 @@ namespace Async
 									connections.resume([&, client = socket.accept(reactor)]{
 										std::cerr << "Socket " << (Descriptor)socket << " client connected to " << endpoint.address() << std::endl;
 										
-										StreamProtocol protocol(client, reactor);
+										Protocol::Stream protocol(client, reactor);
 										
 										auto message = protocol.read(12);
 										
@@ -71,7 +71,7 @@ namespace Async
 							
 							std::cerr << "Socket " << (Descriptor)socket << " connected to " << endpoint.address() << std::endl;
 							
-							StreamProtocol protocol(socket, reactor);
+							Protocol::Stream protocol(socket, reactor);
 							
 							protocol.write("Hello World!");
 						}
