@@ -43,6 +43,7 @@ define_target 'async-network-library' do |target|
 	target.depends "Language/C++11", private: true
 	
 	target.depends "Library/Async"
+	target.depends "Library/URI"
 	
 	target.depends "Build/Files"
 	target.depends "Build/Clang"
@@ -84,6 +85,8 @@ define_configuration 'async-network' do |configuration|
 	configuration.require "concurrent"
 	configuration.require "time"
 	configuration.require "memory"
+	
+	configuration.require "uri"
 	
 	# Provides unit testing infrastructure and generators:
 	configuration.require "unit-test"

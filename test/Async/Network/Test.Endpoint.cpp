@@ -47,7 +47,19 @@ namespace Async
 					examiner.expect(endpoints.size()) > 0u;
 				}
 			},
-
+			
+			{"it can resolve uri endpoints",
+				[](UnitTest::Examiner & examiner) {
+					auto endpoints = Endpoint::named_endpoints("http://[::]");
+					
+					examiner.expect(endpoints.size()) > 0u;
+					
+					auto endpoint = endpoints.front();
+					examiner.expect(endpoint.socket_domain()) == PF_INET6;
+					examiner.expect(endpoint.socket_type()) == SOCK_STREAM;
+					examiner.expect(endpoint.address().port()) == 80;
+				}
+			},
 		};
 	}
 }

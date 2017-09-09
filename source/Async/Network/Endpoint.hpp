@@ -11,6 +11,8 @@
 #include "Socket.hpp"
 #include "Service.hpp"
 
+#include <URI/Generic.hpp>
+
 #include <vector>
 
 #include <netdb.h>
@@ -40,6 +42,8 @@ namespace Async
 			static Endpoints service_endpoints(const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			static Endpoints named_endpoints(const std::string & host, const Service & service, Socket::Type socket_type = SOCK_STREAM);
 			
+			static Endpoints named_endpoints(const URI::Generic & uri);
+			
 			Socket bind(bool reuse_address = true) const
 			{
 				Socket socket(_socket_domain, _socket_type, _socket_protocol);
@@ -62,6 +66,7 @@ namespace Async
 		private:
 			Endpoint(const addrinfo *);
 			static Endpoints for_name(const char * host, const char * service, addrinfo * hints);
+			static Socket::Type socket_type_for_name(const std::string & name);
 			
 			Address _address;
 			
