@@ -106,13 +106,16 @@ namespace Async
 			return std::stoi(port_string);
 		}
 
-		std::string Address::service_name() const
+		std::string Address::service_name(bool numeric) const
 		{
 			std::string port_string;
-
-			auto error = name_info_for_address(nullptr, &port_string, NI_NAMEREQD);
-
-			if (error == EAI_NONAME) {
+			int error = 0;
+			
+			if (!numeric) {
+				error = name_info_for_address(nullptr, &port_string, NI_NAMEREQD);
+			}
+			
+			if (error == EAI_NONAME || numeric) {
 				error = name_info_for_address(nullptr, &port_string, NI_NUMERICSERV);
 			}
 

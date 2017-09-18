@@ -51,7 +51,7 @@ namespace Async
 			Port port() const;
 
 			/// The service name if it is applicable. Retrieved from /etc/services based on the port number.
-			std::string service_name() const;
+			std::string service_name(bool numeric = true) const;
 
 			/// Typically returns the hostname if one is available, otherwise returns the numeric address.
 			std::string canonical_name(bool numeric = true) const;
