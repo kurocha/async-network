@@ -52,8 +52,8 @@ namespace Async
 			/// Shutdown either end of the socket, or both.
 			void shutdown(int mode = SHUT_RDWR);
 			
-			Address local_address();
-			Address remote_address();
+			Address local_address() const;
+			Address remote_address() const;
 			
 			void set_reuse_address(bool value = true);
 			

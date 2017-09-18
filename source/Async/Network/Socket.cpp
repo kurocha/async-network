@@ -36,7 +36,7 @@ namespace Async
 				throw std::system_error(errno, std::generic_category(), "shutdown");
 		}
 		
-		Address Socket::local_address()
+		Address Socket::local_address() const
 		{
 			sockaddr_storage storage;
 			sockaddr * data = reinterpret_cast<sockaddr *>(&storage);
@@ -50,7 +50,7 @@ namespace Async
 			return Address(data, size);
 		}
 		
-		Address Socket::remote_address()
+		Address Socket::remote_address() const
 		{
 			sockaddr_storage storage;
 			sockaddr * data = reinterpret_cast<sockaddr *>(&storage);
