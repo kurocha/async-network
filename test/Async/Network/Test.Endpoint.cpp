@@ -14,6 +14,8 @@ namespace Async
 {
 	namespace Network
 	{
+		using namespace UnitTest::Expectations;
+		
 		UnitTest::Suite EndpointTestSuite {
 			"Async::Network::Endpoint",
 			
@@ -21,7 +23,7 @@ namespace Async
 				[](UnitTest::Examiner & examiner) {
 					auto endpoints = Endpoint::service_endpoints(1024, SOCK_STREAM);
 					
-					examiner << "Interface endpoints available.";
+					examiner << "Interface endpoints available." << std::endl;
 					examiner.expect(endpoints.size()) > 0u;
 					
 					int inet = 0;
@@ -31,12 +33,12 @@ namespace Async
 							inet += 1;
 					}
 					
-					examiner << "IPv4 address was present.";
+					examiner << "IPv4 address was present." << std::endl;
 					examiner.expect(inet) > 0;
 
 					examiner.expect([&](){
 						Endpoint::named_endpoints("localhost", "ThisServiceDoesNotExist", SOCK_STREAM);
-					}).to_throw<std::system_error>();
+					}).to(throw_exception<std::system_error>());
 				}
 			},
 			
