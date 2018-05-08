@@ -24,7 +24,7 @@ namespace Async
 			set_non_blocking(*this);
 		}
 		
-		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type, protocol))
+		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type | SOCK_CLOEXEC, protocol))
 		{
 		}
 		
@@ -132,11 +132,13 @@ namespace Async
 					event.wait();
 					
 					check_errors();
+					// std::cerr << "::connect(...) -> connected" << std::endl;
 				} else {
+					// std::cerr << "::connect(...) -> " << result << errno << std::endl;
 					throw std::system_error(errno, std::generic_category(), "connect");
 				}
 			} else {
-				// connected.
+				// std::cerr << "::connect(...) -> connected" << std::endl;
 				return;
 			}
 		}
