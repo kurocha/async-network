@@ -15,13 +15,15 @@
 #include <Async/Readable.hpp>
 #include <Async/Writable.hpp>
 
+#include <fcntl.h>
+
 namespace Async
 {
 	namespace Network
 	{
 		Socket::Socket(Descriptor descriptor) : Handle(descriptor)
 		{
-			set_non_blocking(*this);
+			update_flags(*this, O_NONBLOCK | O_CLOEXEC);
 		}
 		
 		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type | SOCK_CLOEXEC, protocol))
