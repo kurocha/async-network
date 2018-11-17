@@ -26,7 +26,7 @@ namespace Async
 			update_flags(*this, O_NONBLOCK | O_CLOEXEC);
 		}
 		
-		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type | SOCK_CLOEXEC, protocol))
+		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type, protocol))
 		{
 		}
 		
