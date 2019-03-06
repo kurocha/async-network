@@ -28,71 +28,57 @@ end
 # Build Targets
 
 define_target 'async-network-library' do |target|
-	target.build do
-		source_root = target.package.path + 'source'
-		
-		copy headers: source_root.glob('Async/Network/**/*.hpp')
-		
-		build static_library: "AsyncNetwork", source_files: source_root.glob('Async/Network/**/*.cpp')
-	end
+	target.depends "Language/C++14"
 	
-	target.depends 'Build/Files'
-	target.depends 'Build/Clang'
-	
-	target.depends :platform
-	target.depends "Language/C++11", private: true
-	
-	target.depends "Library/Async"
-	target.depends "Library/URI"
-	
-	target.depends "Build/Files"
-	target.depends "Build/Clang"
+	target.depends "Library/Async", public: true
+	target.depends "Library/URI", public: true
 	
 	target.provides "Library/AsyncNetwork" do
-		append linkflags [
-			->{install_prefix + 'lib/libAsyncNetwork.a'},
-		]
+		source_root = target.package.path + 'source'
+		
+		library_path = build static_library: "AsyncNetwork", source_files: source_root.glob('Async/Network/**/*.cpp')
+		
+		append linkflags library_path
+		append header_search_paths source_root
 	end
 end
 
 define_target "async-nework-tests" do |target|
-	target.build do |*arguments|
+	target.depends "Language/C++14"
+	
+	target.depends "Library/Parallel"
+	target.depends "Library/UnitTest"
+	target.depends "Library/AsyncNetwork"
+	
+	target.provides "Test/AsyncNetwork" do |*arguments|
 		test_root = target.package.path + 'test'
 		
 		run tests: 'AsyncNetwork', source_files: test_root.glob('Async/Network/**/*.cpp'), arguments: arguments
 	end
-	
-	target.depends "Language/C++14", private: true
-	
-	target.depends "Library/UnitTest"
-	target.depends "Library/AsyncNetwork"
-	
-
-	target.provides "Test/AsyncNetwork"
 end
 
 # Configurations
 
-define_configuration 'async-network' do |configuration|
+define_configuration "development" do |configuration|
 	configuration[:source] = "http://github.com/kurocha/"
-	configuration.require "generate-project"
+	configuration.import "async-network"
 	
 	# Provides all the build related infrastructure:
 	configuration.require "platforms"
 	configuration.require "build-files"
 	
-	configuration.require "async"
-	configuration.require "concurrent"
-	configuration.require "time"
-	configuration.require "memory"
-	
-	configuration.require "uri"
-	
 	# Provides unit testing infrastructure and generators:
 	configuration.require "unit-test"
 	
 	# Provides some useful C++ generators:
-	configuration.require "generate-cpp-class"
-	configuration.require "generate-project"
 	configuration.require "generate-travis"
+	configuration.require "generate-project"
+	configuration.require "generate-cpp-class"
+end
+
+define_configuration "async-network" do |configuration|
+	configuration.public!
+	
+	configuration.require "async"
+	configuration.require "uri"
 end

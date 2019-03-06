@@ -8,7 +8,7 @@
 
 #include <UnitTest/UnitTest.hpp>
 
-#include <Concurrent/Distributor.hpp>
+#include <Parallel/Distributor.hpp>
 #include <Concurrent/Fiber.hpp>
 #include <Async/Network/Endpoint.hpp>
 #include <Async/Network/Socket.hpp>
@@ -95,6 +95,7 @@ namespace Async
 					
 					for (auto && endpoint : endpoints) {
 						auto && socket = endpoint.bind();
+						
 						socket.listen();
 						
 						servers.push_back(std::move(socket));
@@ -103,7 +104,7 @@ namespace Async
 					Time::Timer duration;
 					
 					{
-						Concurrent::Distributor<std::function<void()>> server(1, 1);
+						Parallel::Distributor<std::function<void()>> server(1, 1);
 						
 						for (std::size_t i = 0; i < server.concurrency(); i += 1) {
 							server([&servers](){
@@ -121,13 +122,11 @@ namespace Async
 												Fiber::current->annotate("server connection");
 												Protocol::Stream protocol(peer, reactor);
 												
-												while (true) {
+												// while (true) {
 													auto message = protocol.read(12);
 													
-													if (message.empty()) break;
-													
 													protocol.write(message);
-												}
+												// }
 											});
 										}
 									});
@@ -137,7 +136,7 @@ namespace Async
 							});
 						}
 						
-						Concurrent::Distributor<std::function<void()>> client(1, 2);
+						Parallel::Distributor<std::function<void()>> client(1, 2);
 						
 						for (std::size_t i = 0; i < client.concurrency(); i += 1) {
 							client([&endpoints, &statistics_mutex, &client_statistics](){
@@ -150,17 +149,15 @@ namespace Async
 									connections.resume([&]{
 										Fiber::current->annotate("client connection");
 										
-										auto && peer = endpoint.connect(reactor);
-										Protocol::Stream protocol(peer, reactor);
-										
 										while (true) {
 											auto sample = statistics.sample();
+											
+											auto && peer = endpoint.connect(reactor);
+											Protocol::Stream protocol(peer, reactor);
 											
 											protocol.write("Hello World!");
 											
 											auto message = protocol.read(12);
-											
-											if (message.empty()) break;
 										}
 									});
 									
