@@ -115,19 +115,13 @@ namespace Async
 									bindings.resume([&]{
 										Fiber::current->annotate("server");
 										
-										Fiber::Pool connections;
-										
 										while (true) {
-											connections.resume([&, peer = socket.accept(reactor)]{
-												Fiber::current->annotate("server connection");
-												Protocol::Stream protocol(peer, reactor);
-												
-												// while (true) {
-													auto message = protocol.read(12);
-													
-													protocol.write(message);
-												// }
-											});
+											auto && peer = socket.accept(reactor);
+											Fiber::current->annotate("server connection");
+											Protocol::Stream protocol(peer, reactor);
+											
+											auto message = protocol.read(12);
+											protocol.write(message);
 										}
 									});
 								}
