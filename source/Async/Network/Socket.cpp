@@ -32,6 +32,9 @@ namespace Async
 		
 		Socket::Domain Socket::domain() const
 		{
+#ifdef __MACH__
+			return local_address().family();
+#else
 			Domain domain = -1;
 			socklen_t length = sizeof(domain);
 			
@@ -41,6 +44,7 @@ namespace Async
 				throw std::system_error(errno, std::generic_category(), "getsockopt(SOL_SOCKET, SO_DOMAIN)");
 			
 			return domain;
+#endif
 		}
 		
 		Socket::Type Socket::type() const
@@ -58,6 +62,9 @@ namespace Async
 		
 		Socket::Protocol Socket::protocol() const
 		{
+#ifdef __MACH__
+			return 0;
+#else
 			Protocol protocol = 0;
 			socklen_t length = sizeof(protocol);
 			
@@ -67,6 +74,7 @@ namespace Async
 				throw std::system_error(errno, std::generic_category(), "getsockopt(SOL_SOCKET, SO_PROTOCOL)");
 			
 			return protocol;
+#endif
 		}
 		
 		void Socket::shutdown(int mode)
