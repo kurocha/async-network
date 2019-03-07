@@ -1,5 +1,5 @@
 //
-//  Test.Socket.cpp
+//  Socket.cpp
 //  This file is part of the "Async::Network" project and released under the MIT License.
 //
 //  Created by Samuel Williams on 2/7/2017.
