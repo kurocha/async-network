@@ -177,7 +177,7 @@ namespace Async
 									});
 								}
 								
-								reactor.wait(4.0);
+								reactor.wait(1.0);
 							});
 						}
 						
@@ -213,7 +213,7 @@ namespace Async
 									break;
 								}
 								
-								reactor.wait(4.0);
+								reactor.wait(1.0);
 								
 								{
 									std::lock_guard<std::mutex> guard(statistics_mutex);
