@@ -27,7 +27,7 @@ namespace Async
 					examiner.expect(endpoints.size()) > 0u;
 					
 					int inet = 0;
-					for(auto & endpoint : endpoints)
+					for (auto & endpoint : endpoints)
 					{
 						if (endpoint.address().family() == AF_INET)
 							inet += 1;

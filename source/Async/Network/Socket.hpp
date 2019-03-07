@@ -41,6 +41,10 @@ namespace Async
 			Socket(Socket &&) = default;
 			Socket & operator=(Socket &&) = default;
 			
+			Domain domain() const;
+			Type type() const;
+			Protocol protocol() const;
+			
 			/// Check if the underlying socket is connected to a remote peer using getpeername.
 			bool is_connected() const;
 

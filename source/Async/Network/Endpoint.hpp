@@ -29,6 +29,8 @@ namespace Async
 		{
 		public:
 			Endpoint(const Address & address, Socket::Domain socket_domain, Socket::Type socket_type, Socket::Protocol socket_protocol);
+			Endpoint(const Socket & socket) : Endpoint(socket.local_address(), socket.domain(), socket.type(), socket.protocol()) {}
+			
 			virtual ~Endpoint();
 			
 			Endpoint(const Endpoint & other) = default;

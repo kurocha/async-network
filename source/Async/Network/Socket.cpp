@@ -30,6 +30,45 @@ namespace Async
 		{
 		}
 		
+		Socket::Domain Socket::domain() const
+		{
+			Domain domain = -1;
+			socklen_t length = sizeof(domain);
+			
+			auto result = getsockopt(_descriptor, SOL_SOCKET, SO_DOMAIN, &domain, &length);
+			
+			if (result == -1)
+				throw std::system_error(errno, std::generic_category(), "getsockopt(SOL_SOCKET, SO_DOMAIN)");
+			
+			return domain;
+		}
+		
+		Socket::Type Socket::type() const
+		{
+			Type type = -1;
+			socklen_t length = sizeof(type);
+			
+			auto result = getsockopt(_descriptor, SOL_SOCKET, SO_TYPE, &type, &length);
+			
+			if (result == -1)
+				throw std::system_error(errno, std::generic_category(), "getsockopt(SOL_SOCKET, SO_TYPE)");
+			
+			return type;
+		}
+		
+		Socket::Protocol Socket::protocol() const
+		{
+			Protocol protocol = 0;
+			socklen_t length = sizeof(protocol);
+			
+			auto result = getsockopt(_descriptor, SOL_SOCKET, SO_PROTOCOL, &protocol, &length);
+			
+			if (result == -1)
+				throw std::system_error(errno, std::generic_category(), "getsockopt(SOL_SOCKET, SO_PROTOCOL)");
+			
+			return protocol;
+		}
+		
 		void Socket::shutdown(int mode)
 		{
 			auto result = ::shutdown(_descriptor, mode);
