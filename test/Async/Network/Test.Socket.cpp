@@ -117,7 +117,6 @@ namespace Async
 										
 										while (true) {
 											auto && peer = socket.accept(reactor);
-											Fiber::current->annotate("server connection");
 											Protocol::Stream protocol(peer, reactor);
 											
 											auto message = protocol.read(12);
@@ -150,7 +149,6 @@ namespace Async
 											Protocol::Stream protocol(peer, reactor);
 											
 											protocol.write("Hello World!");
-											
 											auto message = protocol.read(12);
 										}
 									});
@@ -172,7 +170,7 @@ namespace Async
 					examiner << "Samples per second: " << client_statistics.samples_per_second() << std::endl;
 					examiner << "Minimum duration: " << client_statistics.minimum_duration() << std::endl;
 					examiner << "Maximum duration: " << client_statistics.maximum_duration() << std::endl;
-					examiner.expect(client_statistics.samples_per_second()).to(be > 10000);
+					examiner.expect(client_statistics.samples_per_second()).to(be > 100);
 				}
 			},
 		};

@@ -52,7 +52,7 @@ namespace Async
 			
 			{"it can resolve uri endpoints",
 				[](UnitTest::Examiner & examiner) {
-					auto endpoints = Endpoint::named_endpoints("http://[::]");
+					auto endpoints = Endpoint::named_endpoints("http://localhost");
 					
 					examiner.expect(endpoints.size()) > 0u;
 					
