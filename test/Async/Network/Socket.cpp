@@ -16,6 +16,7 @@
 #include <Async/Protocol/Stream.hpp>
 
 #include <Time/Statistics.hpp>
+#include <Time/Timer.hpp>
 
 #include <list>
 #include <signal.h>
@@ -29,6 +30,28 @@ namespace Async
 		
 		UnitTest::Suite SocketTestSuite {
 			"Async::Network::Socket",
+			
+			{"it can allocate sockets quickly",
+				[](UnitTest::Examiner & examiner) {
+					const std::size_t batch_size = 1024;
+					
+					std::vector<Socket> sockets;
+					sockets.reserve(10*batch_size);
+					
+					Time::Timer timer;
+					
+					for (std::size_t i = 0; i < 10; i += 1) {
+						timer.reset();
+						
+						for (std::size_t j = 0; j < batch_size; j += 1) {
+							sockets.push_back({PF_INET, SOCK_STREAM});
+						}
+						
+						examiner.expect(timer.time()).to(be < Time::Interval(1.0));
+						examiner << sockets.size() << " sockets: " << timer.time() << " for " << batch_size << " syscalls." << std::endl;
+					}
+				}
+			},
 			
 			{"it connects quickly",
 				[](UnitTest::Examiner & examiner) {

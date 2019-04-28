@@ -44,16 +44,16 @@ define_target 'async-network-library' do |target|
 end
 
 define_target "async-nework-tests" do |target|
-	target.depends "Language/C++14"
+	target.depends 'Library/UnitTest'
+	target.depends "Language/C++14", private: true
 	
 	target.depends "Library/Parallel"
-	target.depends "Library/UnitTest"
 	target.depends "Library/AsyncNetwork"
 	
 	target.provides "Test/AsyncNetwork" do |*arguments|
 		test_root = target.package.path + 'test'
 		
-		run tests: 'AsyncNetwork', source_files: test_root.glob('Async/Network/**/*.cpp'), arguments: arguments
+		run source_files: test_root.glob('Async/Network/**/*.cpp'), arguments: arguments
 	end
 end
 
