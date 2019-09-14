@@ -17,10 +17,22 @@
 
 #include <fcntl.h>
 
+#if defined(SOCK_NONBLOCK) && defined(SOCK_CLOEXEC)
+#define HAVE_ACCEPT4
+#define HAVE_SOCKET_FLAGS
+#endif
+
 namespace Async
 {
 	namespace Network
 	{
+#ifdef HAVE_SOCKET_FLAGS
+		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type | SOCK_NONBLOCK | SOCK_CLOEXEC, protocol))
+		{
+			if (_descriptor == -1)
+				throw std::system_error(errno, std::generic_category(), "socket(domain, type, protocol)");
+		}
+#else
 		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type, protocol))
 		{
 			if (_descriptor == -1)
@@ -28,7 +40,8 @@ namespace Async
 			
 			update_flags(*this, O_NONBLOCK | O_CLOEXEC);
 		}
-		
+#endif
+
 		Socket::Domain Socket::domain() const
 		{
 #ifdef __MACH__
@@ -150,14 +163,20 @@ namespace Async
 			socklen_t size = sizeof(storage);
 			
 			while (true) {
-				// std::cerr << "::accept(" << _descriptor << ", ...)" << std::endl;
+#ifdef HAVE_ACCEPT4
+				auto result = ::accept4(_descriptor, data, &size, SOCK_CLOEXEC | SOCK_NONBLOCK);
+#else
 				auto result = ::accept(_descriptor, data, &size);
-				
+#endif
+
 				if (result == -1) {
 					// std::cerr << "::accept(" << _descriptor << ", ...) -> " << result << " errno=" << errno << std::endl;
 					if (errno != EAGAIN && errno != EWOULDBLOCK)
 						throw std::system_error(errno, std::generic_category(), "accept");
 				} else {
+#ifndef HAVE_ACCEPT4
+					update_flags(result, O_NONBLOCK | O_CLOEXEC);
+#endif
 					return result;
 				}
 				
