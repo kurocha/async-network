@@ -21,13 +21,12 @@ namespace Async
 {
 	namespace Network
 	{
-		Socket::Socket(Descriptor descriptor) : Handle(descriptor)
-		{
-			update_flags(*this, O_NONBLOCK | O_CLOEXEC);
-		}
-		
 		Socket::Socket(Domain domain, Type type, Protocol protocol) : Socket(::socket(domain, type, protocol))
 		{
+			if (_descriptor == -1)
+				throw std::system_error(errno, std::generic_category(), "socket(domain, type, protocol)");
+			
+			update_flags(*this, O_NONBLOCK | O_CLOEXEC);
 		}
 		
 		Socket::Domain Socket::domain() const
