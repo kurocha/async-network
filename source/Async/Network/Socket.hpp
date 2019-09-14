@@ -30,6 +30,7 @@ namespace Async
 			/// IPPROTO_TCP, IPPROTO_UDP, IPPROTO_IPX, etc
 			typedef int Protocol;
 			
+			Socket() {}
 			using Handle::Handle;
 			
 			Socket(Domain domain, Type type, Protocol protocol = 0);
